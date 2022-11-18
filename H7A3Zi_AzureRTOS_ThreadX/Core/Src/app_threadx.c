@@ -51,7 +51,6 @@ TX_THREAD thread_ptr1;
 TX_THREAD thread_ptr2;
 char message1[] = "hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world from thread-1\n";
 char message2[] = "hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world from thread-2\n";
-char notify[] = "semaphore puted!!!";
 int status;
 TX_SEMAPHORE semaphore;
 /* USER CODE END PV */
@@ -60,7 +59,6 @@ TX_SEMAPHORE semaphore;
 /* USER CODE BEGIN PFP */
 void thread1_entry_func(void);
 void thread2_entry_func(void);
-void temp(void);
 /* USER CODE END PFP */
 
 /**
@@ -141,7 +139,4 @@ void thread2_entry_func(void){
 	}
 }
 
-void temp(void){
-	HAL_UART_Transmit(&huart3, (uint8_t *)notify, strlen(notify), 100);
-}
 /* USER CODE END 1 */
