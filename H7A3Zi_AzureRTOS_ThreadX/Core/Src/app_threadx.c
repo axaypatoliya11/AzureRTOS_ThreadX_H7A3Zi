@@ -34,7 +34,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define THREAD_STACK_SIZE	1024
+#define TX_APP_MEM_POOL_SIZE	3*1024
+#define THREAD_STACK_SIZE		512
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,18 +46,28 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 UART_HandleTypeDef huart3;
-uint8_t thread_stack1[THREAD_STACK_SIZE];
-uint8_t thread_stack2[THREAD_STACK_SIZE];
 TX_THREAD thread_ptr1;
 TX_THREAD thread_ptr2;
 char message1[] = "hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world from thread-1\n";
 char message2[] = "hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world from thread-2\n";
 int status;
 TX_SEMAPHORE semaphore;
+
+/* stack pointers for thread-1 & 2 */
+CHAR *t1_stack_ptr;
+CHAR *t2_stack_ptr;
+
+/* instance of memory pool */
+TX_BYTE_POOL byte_pool_0;
+
+/* create a buffer to hold the created memory pool */
+UCHAR tx_byte_pool_buffer[TX_APP_MEM_POOL_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
+
+/* thread-1 & 2 entry function prototypes */
 void thread1_entry_func(void);
 void thread2_entry_func(void);
 /* USER CODE END PFP */
@@ -76,11 +87,36 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   /* USER CODE END App_ThreadX_MEM_POOL */
 
   /* USER CODE BEGIN App_ThreadX_Init */
-  status = tx_semaphore_create(&semaphore, "semaphore-1", 1);
-  if(status == TX_SUCCESS){
-	  tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, thread_stack1, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
-	  tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, thread_stack2, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
+  CHAR *pointer;
+
+  /* <!-- create a semaphore --> */
+  if(tx_semaphore_create(&semaphore, "semaphore-1", 1) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
   }
+
+  /* <!-- create a memory pool --> */
+//  if(tx_byte_pool_create(&byte_pool_0, "byte_pool_0", tx_byte_pool_buffer, TX_APP_MEM_POOL_SIZE) != TX_SUCCESS){
+//	  ret = TX_POOL_ERROR;
+//  }
+
+  /* <!-- allocate memory to thread-1 from memory pool -->
+  NOTE: byte_pool is already created above. We just have to change the value of TX_APP_MEM_POOL_SIZE in the App/app_azure_rtos_config.h file */
+  if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
+  if(tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
+
+  /* <!-- allocate memory to thread-2 from memory pool --> */
+  if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
+  if(tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
+
+
   /* USER CODE END App_ThreadX_Init */
 
   return ret;
