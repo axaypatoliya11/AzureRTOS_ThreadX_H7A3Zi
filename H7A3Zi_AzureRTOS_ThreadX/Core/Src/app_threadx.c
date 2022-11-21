@@ -77,10 +77,8 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 
   /* USER CODE BEGIN App_ThreadX_Init */
   status = tx_semaphore_create(&semaphore, "semaphore-1", 1);
-  if(status == TX_SUCCESS){
-	  tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, thread_stack1, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
-	  tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, thread_stack2, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
-  }
+  tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, thread_stack1, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
+  tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, thread_stack2, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
   /* USER CODE END App_ThreadX_Init */
 
   return ret;
