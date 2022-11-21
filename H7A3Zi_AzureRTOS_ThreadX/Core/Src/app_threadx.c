@@ -92,18 +92,30 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 
 
   /* <!-- create a semaphore --> */
-  status = tx_semaphore_create(&semaphore, "semaphore-1", 1);
+  if(tx_semaphore_create(&semaphore, "semaphore-1", 1) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
 
   /* <!-- create a memory pool --> */
-  status = tx_byte_pool_create(&byte_pool_0, "byte_pool_0", tx_byte_pool_buffer, TX_APP_MEM_POOL_SIZE);
+  if(tx_byte_pool_create(&byte_pool_0, "byte_pool_0", tx_byte_pool_buffer, TX_APP_MEM_POOL_SIZE) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
 
   /* <!-- allocate memory to thread-1 from memory pool --> */
-  status = tx_byte_allocate(&byte_pool_0, (void **)&t1_stack_ptr, THREAD_STACK_SIZE, TX_NO_WAIT);
-  status = tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, t1_stack_ptr, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
+  if(tx_byte_allocate(&byte_pool_0, (void **)&t1_stack_ptr, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
+  if(tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, t1_stack_ptr, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
 
   /* <!-- allocate memory to thread-2 from memory pool --> */
-  status = tx_byte_allocate(&byte_pool_0, (void **)&t2_stack_ptr, THREAD_STACK_SIZE, TX_NO_WAIT);
-  status = tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, t2_stack_ptr, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START);
+  if(tx_byte_allocate(&byte_pool_0, (void **)&t2_stack_ptr, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
+  if(tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, t2_stack_ptr, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;
+  }
 
 
   /* USER CODE END App_ThreadX_Init */
