@@ -1,0 +1,6 @@
+app_threadx.c:88:6:App_ThreadX_Init	64	static
+app_threadx.c:156:6:MX_ThreadX_Init	8	static
+app_threadx.c:170:6:thread1_entry_func	8	static
+app_threadx.c:191:6:thread2_entry_func	8	static
+app_threadx.c:211:6:thread3_entry_func	8	static
+app_threadx.c:231:6:thread4_entry_func	8	static

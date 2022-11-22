@@ -30,7 +30,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -57,7 +57,28 @@ void MX_ThreadX_Init(void);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+UART_HandleTypeDef huart3;
+TX_THREAD thread_ptr1;
+TX_THREAD thread_ptr2;
+TX_THREAD thread_ptr3;
+TX_THREAD thread_ptr4;
+TX_SEMAPHORE semaphore_1;
+TX_SEMAPHORE semaphore_2;
+TX_SEMAPHORE semaphore_3;
+TX_SEMAPHORE semaphore_4;
+int status;
 
+extern int pattern_flag;
+
+/* get the thread info */
+CHAR *name;
+UINT state;
+ULONG run_count;
+UINT priority[4];
+UINT preemption_threshold[4];
+UINT time_slice;
+TX_THREAD *next_thread;
+TX_THREAD *suspended_thread;
 /* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */
