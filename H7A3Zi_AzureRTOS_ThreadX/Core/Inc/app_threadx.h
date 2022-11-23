@@ -69,6 +69,7 @@ TX_SEMAPHORE semaphore_4;
 int status;
 
 extern int pattern_flag;
+extern int support_flag;
 
 /* get the thread info */
 CHAR *name;
