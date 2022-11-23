@@ -57,7 +57,7 @@
 char message1[] = "This is thread-1\n";
 char message2[] = "This is thread-2\n";
 char message3[] = "This is thread-3\n";
-char message4[] = "This is thread-4\n\n";
+char message4[] = "This is thread-4\n";
 
 /* get the thread info */
 //CHAR *name;
@@ -98,7 +98,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   CHAR *pointer;
 
   /* <!-- create a semaphore --> */
-    if(tx_semaphore_create(&semaphore_1, "semaphore-1", 0) != TX_SUCCESS){
+    if(tx_semaphore_create(&semaphore_1, "semaphore-1", 1) != TX_SUCCESS){
   	  ret = TX_POOL_ERROR;
     }
     if(tx_semaphore_create(&semaphore_2, "semaphore-2", 0) != TX_SUCCESS){
@@ -169,7 +169,7 @@ void MX_ThreadX_Init(void)
 /* USER CODE BEGIN 1 */
 void thread1_entry_func(void){
 	while(1){
-		status = tx_semaphore_put(&semaphore_1);
+//		status = tx_semaphore_put(&semaphore_1);
 		status = tx_semaphore_get(&semaphore_1, TX_WAIT_FOREVER);
 		HAL_UART_Transmit(&huart3, (uint8_t *)message1, strlen(message1), 100);
 		tx_thread_sleep(50); //delay of 500 ms
@@ -189,8 +189,8 @@ void thread1_entry_func(void){
 }
 
 void thread2_entry_func(void){
-	status = tx_semaphore_get(&semaphore_2, TX_WAIT_FOREVER);
 	while(1){
+		status = tx_semaphore_get(&semaphore_2, TX_WAIT_FOREVER);
 		HAL_UART_Transmit(&huart3, (uint8_t *)message2, strlen(message2), 100);
 		tx_thread_sleep(50); //delay of 500 ms
 
@@ -236,7 +236,7 @@ void thread4_entry_func(void){
 		tx_thread_sleep(50); //delay of 500 ms
 
 #ifdef __PATTERN_1_3_2_4__
-//		status = tx_semaphore_put(&semaphore);
+		status = tx_semaphore_put(&semaphore_1);
 #else
 		if(pattern_flag == 1){
 			status = tx_semaphore_put(&semaphore_3);
