@@ -77,6 +77,7 @@ void thread1_entry_func(void);
 void thread2_entry_func(void);
 void thread3_entry_func(void);
 void thread4_entry_func(void);
+void general_thread_entry_func(TX_SEMAPHORE *semaphore_ptr);
 void priority_inverse(void);
 /* USER CODE END PFP */
 
@@ -116,7 +117,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
     if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
   	  ret = TX_POOL_ERROR;
     }
-    if(tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+    if(tx_thread_create(&thread_ptr1, "thread-1", (void*)general_thread_entry_func, (UINT)&semaphore_1, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
   	  ret = TX_POOL_ERROR;
     }
 
@@ -124,7 +125,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
     if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
   	  ret = TX_POOL_ERROR;
     }
-    if(tx_thread_create(&thread_ptr2, "thread-2", (void*)thread2_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+    if(tx_thread_create(&thread_ptr2, "thread-2", (void*)general_thread_entry_func, (UINT)&semaphore_2, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
   	  ret = TX_POOL_ERROR;
     }
 
@@ -132,7 +133,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 	if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
 	}
-	if(tx_thread_create(&thread_ptr3, "thread-3", (void*)thread3_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+	if(tx_thread_create(&thread_ptr3, "thread-3", (void*)general_thread_entry_func, (UINT)&semaphore_3, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
 	}
 
@@ -140,7 +141,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 	if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
 	}
-	if(tx_thread_create(&thread_ptr4, "thread-4", (void*)thread4_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+	if(tx_thread_create(&thread_ptr4, "thread-4", (void*)general_thread_entry_func, (UINT)&semaphore_4, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
 	}
   /* USER CODE END App_ThreadX_Init */
@@ -167,20 +168,30 @@ void MX_ThreadX_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
+
 void thread1_entry_func(void){
 	while(1){
-//		status = tx_semaphore_put(&semaphore_1);
 		status = tx_semaphore_get(&semaphore_1, TX_WAIT_FOREVER);
-		HAL_UART_Transmit(&huart3, (uint8_t *)message1, strlen(message1), 100);
-		tx_thread_sleep(50); //delay of 500 ms
 
 #ifdef __PATTERN_1_3_2_4__
 		status = tx_semaphore_put(&semaphore_3);
 #else
-		if(pattern_flag == 1){
+		if(pattern_flag == 1 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message1, strlen(message1), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_4);
 		}
-		else{
+		else if(pattern_flag == 1 && support_flag == 0){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_4);
+		}
+		else if(pattern_flag == 0 && support_flag == 0){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_2);
+		}
+		else if(pattern_flag == 0 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message1, strlen(message1), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_2);
 		}
 #endif
@@ -191,16 +202,26 @@ void thread1_entry_func(void){
 void thread2_entry_func(void){
 	while(1){
 		status = tx_semaphore_get(&semaphore_2, TX_WAIT_FOREVER);
-		HAL_UART_Transmit(&huart3, (uint8_t *)message2, strlen(message2), 100);
-		tx_thread_sleep(50); //delay of 500 ms
 
 #ifdef __PATTERN_1_3_2_4__
 		status = tx_semaphore_put(&semaphore_4);
 #else
-		if(pattern_flag == 1){
+		if(pattern_flag == 1 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message2, strlen(message2), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_1);
 		}
-		else{
+		else if((pattern_flag == 1) && (support_flag == 0)){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_4);
+		}
+		else if(pattern_flag == 0 && support_flag == 0){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_1);
+		}
+		else if(pattern_flag == 0 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message2, strlen(message2), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_3);
 		}
 #endif
@@ -211,16 +232,26 @@ void thread2_entry_func(void){
 void thread3_entry_func(void){
 	while(1){
 		status = tx_semaphore_get(&semaphore_3, TX_WAIT_FOREVER);
-		HAL_UART_Transmit(&huart3, (uint8_t *)message3, strlen(message3), 100);
-		tx_thread_sleep(50); //delay of 500 ms
 
 #ifdef __PATTERN_1_3_2_4__
 		status = tx_semaphore_put(&semaphore_2);
 #else
-		if(pattern_flag == 1){
+		if(pattern_flag == 1 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message3, strlen(message3), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_2);
 		}
-		else{
+		else if((pattern_flag == 1) && (support_flag == 0)){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_4);
+		}
+		else if(pattern_flag == 0 && support_flag == 0){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_1);
+		}
+		else if(pattern_flag == 0 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message3, strlen(message3), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_4);
 		}
 #endif
@@ -232,16 +263,26 @@ void thread4_entry_func(void){
 	while(1){
 		/* get the suspended semaphore */
 		status = tx_semaphore_get(&semaphore_4, TX_WAIT_FOREVER);
-		HAL_UART_Transmit(&huart3, (uint8_t *)message4, strlen(message4), 100);
-		tx_thread_sleep(50); //delay of 500 ms
 
 #ifdef __PATTERN_1_3_2_4__
 		status = tx_semaphore_put(&semaphore_1);
 #else
-		if(pattern_flag == 1){
+		if((pattern_flag == 1) && (support_flag == 1)){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message4, strlen(message4), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_3);
 		}
-		else{
+		else if((pattern_flag == 1) && (support_flag == 0)){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_3);
+		}
+		else if(pattern_flag == 0 && support_flag == 0){
+			support_flag = 1;
+			status = tx_semaphore_put(&semaphore_1);
+		}
+		else if(pattern_flag == 0 && support_flag == 1){
+			HAL_UART_Transmit(&huart3, (uint8_t *)message4, strlen(message4), 100);
+			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_1);
 		}
 #endif
