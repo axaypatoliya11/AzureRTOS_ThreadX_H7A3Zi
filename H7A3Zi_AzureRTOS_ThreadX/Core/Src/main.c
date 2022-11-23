@@ -304,11 +304,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if(GPIO_Pin == GPIO_PIN_13) // If The INT Source Is EXTI Line9 (A9 Pin)
     {
-    	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_14); // Toggle The Output (LED) Pin
     	if(pattern_flag == 0){
+    		HAL_UART_Transmit(&huart3, "\nbutton pressed\n", strlen("\nbutton pressed\n"), 100);
     		pattern_flag = 1;
     	}
     	else{
+    		HAL_UART_Transmit(&huart3, "\nbutton again pressed\n", strlen("\nbutton again pressed\n"), 100);
     		pattern_flag = 0;
     	}
     }
