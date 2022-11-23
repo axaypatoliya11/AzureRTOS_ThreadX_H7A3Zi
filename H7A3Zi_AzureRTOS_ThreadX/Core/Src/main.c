@@ -45,6 +45,7 @@ UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
 int pattern_flag;
+int support_flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -304,6 +305,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if(GPIO_Pin == GPIO_PIN_13) // If The INT Source Is EXTI Line9 (A9 Pin)
     {
+		support_flag = 0;
     	if(pattern_flag == 0){
     		HAL_UART_Transmit(&huart3, "\nbutton pressed\n", strlen("\nbutton pressed\n"), 100);
     		pattern_flag = 1;
