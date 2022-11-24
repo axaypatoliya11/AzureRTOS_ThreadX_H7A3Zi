@@ -30,7 +30,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -57,7 +57,10 @@ void MX_ThreadX_Init(void);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+UART_HandleTypeDef huart3;
+TX_THREAD thread_ptr1;
+TX_SEMAPHORE semaphore_1;
+int status;
 /* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */
