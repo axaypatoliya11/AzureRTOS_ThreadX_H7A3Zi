@@ -71,15 +71,6 @@ int status;
 extern int pattern_flag;
 extern int support_flag;
 
-/* get the thread info */
-CHAR *name;
-UINT state;
-ULONG run_count;
-UINT priority[4];
-UINT preemption_threshold[4];
-UINT time_slice;
-TX_THREAD *next_thread;
-TX_THREAD *suspended_thread;
 /* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */

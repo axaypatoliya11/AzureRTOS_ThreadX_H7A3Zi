@@ -46,28 +46,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-//UART_HandleTypeDef huart3;
-//TX_THREAD thread_ptr1;
-//TX_THREAD thread_ptr2;
-//TX_THREAD thread_ptr3;
-//TX_THREAD thread_ptr4;
-//TX_SEMAPHORE semaphore;
-//int status;
-//
 char message1[] = "This is thread-1\n";
 char message2[] = "This is thread-2\n";
 char message3[] = "This is thread-3\n";
 char message4[] = "This is thread-4\n";
-
-/* get the thread info */
-//CHAR *name;
-//UINT state;
-//ULONG run_count;
-//UINT priority[4];
-//UINT preemption_threshold[4];
-//UINT time_slice;
-//TX_THREAD *next_thread;
-//TX_THREAD *suspended_thread;
 
 /* USER CODE END PV */
 
@@ -205,7 +187,7 @@ void thread2_entry_func(void){
 #ifdef __PATTERN_1_3_2_4__
 		status = tx_semaphore_put(&semaphore_4);
 #else
-		if(pattern_flag == 1 && support_flag == 1){
+		if((pattern_flag == 1) && (support_flag == 1)){
 			HAL_UART_Transmit(&huart3, (uint8_t *)message2, strlen(message2), 100);
 			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_1);
@@ -214,11 +196,11 @@ void thread2_entry_func(void){
 			support_flag = 1;
 			status = tx_semaphore_put(&semaphore_4);
 		}
-		else if(pattern_flag == 0 && support_flag == 0){
+		else if((pattern_flag == 0) && (support_flag == 0)){
 			support_flag = 1;
 			status = tx_semaphore_put(&semaphore_1);
 		}
-		else if(pattern_flag == 0 && support_flag == 1){
+		else if((pattern_flag == 0) && (support_flag == 1)){
 			HAL_UART_Transmit(&huart3, (uint8_t *)message2, strlen(message2), 100);
 			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_3);
@@ -235,7 +217,7 @@ void thread3_entry_func(void){
 #ifdef __PATTERN_1_3_2_4__
 		status = tx_semaphore_put(&semaphore_2);
 #else
-		if(pattern_flag == 1 && support_flag == 1){
+		if((pattern_flag == 1) && (support_flag == 1)){
 			HAL_UART_Transmit(&huart3, (uint8_t *)message3, strlen(message3), 100);
 			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_2);
@@ -244,11 +226,11 @@ void thread3_entry_func(void){
 			support_flag = 1;
 			status = tx_semaphore_put(&semaphore_4);
 		}
-		else if(pattern_flag == 0 && support_flag == 0){
+		else if((pattern_flag == 0) && (support_flag == 0)){
 			support_flag = 1;
 			status = tx_semaphore_put(&semaphore_1);
 		}
-		else if(pattern_flag == 0 && support_flag == 1){
+		else if((pattern_flag == 0) && (support_flag == 1)){
 			HAL_UART_Transmit(&huart3, (uint8_t *)message3, strlen(message3), 100);
 			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_4);
@@ -275,11 +257,11 @@ void thread4_entry_func(void){
 			support_flag = 1;
 			status = tx_semaphore_put(&semaphore_3);
 		}
-		else if(pattern_flag == 0 && support_flag == 0){
+		else if((pattern_flag == 0) && (support_flag == 0)){
 			support_flag = 1;
 			status = tx_semaphore_put(&semaphore_1);
 		}
-		else if(pattern_flag == 0 && support_flag == 1){
+		else if((pattern_flag == 0) && (support_flag == 1)){
 			HAL_UART_Transmit(&huart3, (uint8_t *)message4, strlen(message4), 100);
 			tx_thread_sleep(50); //delay of 500 ms
 			status = tx_semaphore_put(&semaphore_1);
