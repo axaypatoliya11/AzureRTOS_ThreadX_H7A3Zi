@@ -58,8 +58,8 @@ void MX_ThreadX_Init(void);
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 UART_HandleTypeDef huart3;
-TX_THREAD thread_ptr1;
-TX_SEMAPHORE semaphore_1;
+TX_THREAD thread_to_rcv_q_data;
+TX_QUEUE queue_ptr1;
 int status;
 /* USER CODE END PD */
 

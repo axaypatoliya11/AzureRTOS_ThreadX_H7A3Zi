@@ -22,6 +22,8 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "app_threadx.h"
+#include "stm32h7xx_it.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +43,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+//uint8_t q_transmit_bfr;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,6 +57,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern UART_HandleTypeDef huart3;
 extern TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN EV */
@@ -160,18 +163,43 @@ void DebugMon_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles EXTI line[15:10] interrupts.
+  * @brief This function handles USART3 global interrupt.
   */
-void EXTI15_10_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-
-  /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
-  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-
-  /* USER CODE END EXTI15_10_IRQn 1 */
-}
+//void USART3_IRQHandler(void)
+//{
+  /* USER CODE BEGIN USART3_IRQn 0 */
+//	if((READ_REG(huart3.Instance->ISR) & (1 << 3)) == HAL_UART_ERROR_ORE){
+//		SET_BIT(huart3.Instance->ICR, USART_ICR_ORECF); //set the ORECF bit to clear the ORE bit
+//		READ_REG(huart3.Instance->RDR); //read the RDR register to clear RXNE bit
+//	}
+//	status = tx_queue_send(&queue_ptr1, (VOID *)&q_transmit_bfr, TX_NO_WAIT);
+//#ifdef DEV_LOGS_ENABLED
+//	if(status==0x01){
+//		HAL_UART_Transmit(&huart3, (uint8_t*)"TX_DELETED\n", strlen("TX_DELETED\n"), 100);
+//	}
+//	if(status==0x0b){
+//		HAL_UART_Transmit(&huart3, (uint8_t*)"TX_QUEUE_FULL\n", strlen("TX_QUEUE_FULL\n"), 100);
+//	}
+//	if(status==0x1a){
+//		HAL_UART_Transmit(&huart3, (uint8_t*)"TX_WAIT_ABORTED\n", strlen("TX_WAIT_ABORTED\n"), 100);
+//	}
+//	if(status==0x09){
+//		HAL_UART_Transmit(&huart3, (uint8_t*)"TX_QUEUE_ERROR\n", strlen("TX_QUEUE_ERROR\n"), 100);
+//	}
+//	if(status==0x03){
+//		HAL_UART_Transmit(&huart3, (uint8_t*)"TX_PTR_ERROR\n", strlen("TX_PTR_ERROR\n"), 100);
+//	}
+//	if(status==0x04){
+//		HAL_UART_Transmit(&huart3, (uint8_t*)"TX_WAIT_ERROR\n", strlen("TX_WAIT_ERROR\n"), 100);
+//	}
+//#endif
+//	HAL_UART_Receive_IT(&huart3, &q_transmit_bfr, 1);
+  /* USER CODE END USART3_IRQn 0 */
+//  HAL_UART_IRQHandler(&huart3);
+  /* USER CODE BEGIN USART3_IRQn 1 */
+//
+  /* USER CODE END USART3_IRQn 1 */
+//}
 
 /**
   * @brief This function handles TIM6 global interrupt, DAC1_CH1 and DAC1_CH2 underrun error interrupts.

@@ -35,6 +35,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define THREAD_STACK_SIZE		512
+#define QUEUE_STACK_SIZE		128
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,11 +46,13 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 char inp_msg[] = "enter the data:\n";
+//CHAR *q_transmit_bfr = "this is the received data\r\n";
+uint8_t q_receive_bfr;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-void thread1_entry_func(void);
+void thread_to_rcv_q_data_func(void);
 /* USER CODE END PFP */
 
 /**
@@ -69,15 +72,20 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   /* USER CODE BEGIN App_ThreadX_Init */
   CHAR *pointer;
 
-  /* <!-- create a semaphore --> */
-  if(tx_semaphore_create(&semaphore_1, "semaphore-1", 1) != TX_SUCCESS){
+  /* <!-- create a queue --> */
+	if(tx_byte_allocate(byte_pool, (void **)&pointer, QUEUE_STACK_SIZE*sizeof(ULONG), TX_NO_WAIT) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
-  }
+	}
+	if(tx_queue_create(&queue_ptr1, "queue-0", 1, pointer, QUEUE_STACK_SIZE*sizeof(ULONG)) != TX_SUCCESS){
+	  ret = TX_POOL_ERROR;;
+	}
+
+  /* <!-- create a thread --> */
 
   if(tx_byte_allocate(byte_pool, (void **)&pointer, THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
   }
-  if(tx_thread_create(&thread_ptr1, "thread-1", (void*)thread1_entry_func, 0x0000, pointer, THREAD_STACK_SIZE, 15, 15, 1, TX_AUTO_START) != TX_SUCCESS){
+  if(tx_thread_create(&thread_to_rcv_q_data, "thread-2", (void*)thread_to_rcv_q_data_func, 0x0000, pointer, THREAD_STACK_SIZE, 1, 0, 1, TX_AUTO_START) != TX_SUCCESS){
 	  ret = TX_POOL_ERROR;
   }
   /* USER CODE END App_ThreadX_Init */
@@ -104,15 +112,30 @@ void MX_ThreadX_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
-void thread1_entry_func(void){
+void thread_to_rcv_q_data_func(void){
 	while(1){
-		/* get the semaphore */
-		status = tx_semaphore_get(&semaphore_1, TX_WAIT_FOREVER);
-
-		HAL_UART_Transmit(&huart3, (uint8_t *)inp_msg, strlen(inp_msg), 100);
-
-		/* put the semaphore */
-		status = tx_semaphore_put(&semaphore_1);
+		status = tx_queue_receive(&queue_ptr1, (VOID *)&q_receive_bfr, TX_WAIT_FOREVER);
+#ifdef DEV_LOGS_ENABLED
+		if(status==0x01){
+			HAL_UART_Transmit(&huart3, (uint8_t*)"TX_DELETED", strlen("TX_DELETED"), 100);
+		}
+		if(status==0x0a){
+			HAL_UART_Transmit(&huart3, (uint8_t*)"TX_QUEUE_EMPTY", strlen("TX_QUEUE_EMPTY"), 100);
+		}
+		if(status==0x1a){
+			HAL_UART_Transmit(&huart3, (uint8_t*)"TX_WAIT_ABORTED", strlen("TX_WAIT_ABORTED"), 100);
+		}
+		if(status==0x09){
+			HAL_UART_Transmit(&huart3, (uint8_t*)"TX_QUEUE_ERROR", strlen("TX_QUEUE_ERROR"), 100);
+		}
+		if(status==0x03){
+			HAL_UART_Transmit(&huart3, (uint8_t*)"TX_PTR_ERROR", strlen("TX_PTR_ERROR"), 100);
+		}
+		if(status==0x04){
+			HAL_UART_Transmit(&huart3, (uint8_t*)"TX_WAIT_ERROR", strlen("TX_WAIT_ERROR"), 100);
+		}
+#endif
+		HAL_UART_Transmit(&huart3, &q_receive_bfr, 1, 10);
 	}
 }
 /* USER CODE END 1 */
