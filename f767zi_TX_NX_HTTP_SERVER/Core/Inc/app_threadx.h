@@ -1,4 +1,4 @@
-/* USER CODE BEGIN Header */
+		/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    app_threadx.h
@@ -27,7 +27,9 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "tx_api.h"
-
+#include "nx_api.h"
+#include "fx_api.h"
+#include "nxd_http_server.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -61,6 +63,13 @@ void MX_ThreadX_Init(void);
 /* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */
+NX_PACKET nx_packet_pool;
+NX_HTTP_SERVER http_server;
+NX_IP ip;
+
+FX_MEDIA media_instance;
+
+NX_IP_DRIVER user_driver;
 
 /* USER CODE END 1 */
 

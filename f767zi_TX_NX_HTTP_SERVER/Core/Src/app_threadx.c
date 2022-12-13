@@ -83,6 +83,19 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   if (tx_byte_allocate(byte_pool, (void **)&pointer, NETX_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS){
     return TX_POOL_ERROR;
   }
+  /* Create a packet pool.  */
+  if(nx_packet_pool_create(&nx_packet_pool, "NetX Main Packet Pool", 40, (void *)pointer , NETX_STACK_SIZE) != TX_SUCCESS){
+	  printf("error in creating NX packet pool\r\n");
+  }
+  /* Create an IP Instance.  */
+  if(nx_ip_create(&ip, "NetX IP Instance (ip)", IP_ADDRESS(1, 2, 3, 4), 0xFFFFFF00UL, &nx_packet_pool, &user_driver, pointer, NETX_STACK_SIZE, 1) != TX_SUCCESS){
+	  printf("error in creating an IP instance\r\n");
+  }
+  /* create a HTTP server */
+  if(nx_http_server_create(&http_server, "HTTP Server", &ip, &media_instance, pointer, NETX_STACK_SIZE, &nx_packet_pool, NULL, NULL) != TX_SUCCESS){
+	  printf("error in creating HTTP server");
+  }
+
 
   /* USER CODE END App_ThreadX_Init */
 
