@@ -35,7 +35,7 @@
 /* USER CODE BEGIN PD */
 #define NULL_DATA_FOR_THREAD	0x000
 #define THREAD_STACK_SIZE		512
-#define NETX_STACK_SIZE		512
+#define NETX_STACK_SIZE			512
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -88,7 +88,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 	  printf("error in creating NX packet pool\r\n");
   }
   /* Create an IP Instance.  */
-  if(nx_ip_create(&ip, "NetX IP Instance (ip)", IP_ADDRESS(1, 2, 3, 4), 0xFFFFFF00UL, &nx_packet_pool, &user_driver, pointer, NETX_STACK_SIZE, 1) != TX_SUCCESS){
+  if(nx_ip_create(&ip, "NetX IP Instance (ip)", IP_ADDRESS(192, 168, 1, 1), IP_ADDRESS(255, 255, 255, 0), &nx_packet_pool, &user_driver, pointer, NETX_STACK_SIZE, 1) != TX_SUCCESS){
 	  printf("error in creating an IP instance\r\n");
   }
   /* create a HTTP server */

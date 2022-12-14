@@ -76,7 +76,7 @@ extern   "C" {
 #include    "nx_api.h"
 /* If not using FileX, define this option and define the file writing services
    declared in filex_stub.h.  */ 
-/* #define      NX_HTTP_NO_FILEX */
+//#define      NX_HTTP_NO_FILEX
 
 #ifndef      NX_HTTP_NO_FILEX
 #include    "fx_api.h"
