@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "nx_http_server.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
